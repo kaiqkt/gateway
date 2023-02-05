@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 
 @Configuration
-class AuthRegistryRoutesConfig(
+class AuthRegistryRoutesServiceConfig(
     @Value("\${services.authorization-registry-service-url}")
     private val serviceUrl: String
 ) {

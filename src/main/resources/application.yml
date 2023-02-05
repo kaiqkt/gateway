@@ -3,3 +3,4 @@ server:
 
 services:
   authorization-registry-service-url: ${AUTHORIZATION-REGISTRY-SERVICE}
+  communication-service-url: ${COMMUNICATION-SERVICE-URL}
