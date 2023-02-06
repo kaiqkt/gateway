@@ -91,17 +91,23 @@ class AuthRegistryRoutesServiceConfig(
                 r.uri(serviceUrl)
             }
             .route { r: PredicateSpec ->
-                r.path("/user/redefine-password")
+                r.path("/redefine-password")
                 r.filters {
-                    this.filter(setHeadersFilter.apply(SetHeadersFilter.Config("application/vnd.kaiqkt_user_redefine_password_v1+json")))
+                    this.filter(setHeadersFilter.apply(SetHeadersFilter.Config("application/vnd.kaiqkt_redefine_password_v1+json")))
                 }
                 r.uri(serviceUrl)
             }
             .route { r: PredicateSpec ->
-                r.path("/user/redefine-password/**")
+                r.path("/redefine-password/**")
                 r.filters {
-                    this.rewritePath("/user/redefine-password/?<code>.*", "/user/redefine-password/\${code}")
-                    this.filter(setHeadersFilter.apply(SetHeadersFilter.Config("application/vnd.kaiqkt_user_redefine_password_v1+json")))
+                    this.rewritePath("/redefine-password/?<code>.*", "/redefine-password/\${code}")
+                }
+                r.uri(serviceUrl)
+            }
+            .route { r: PredicateSpec ->
+                r.path("/redefine-password/info/**")
+                r.filters {
+                    this.rewritePath("/redefine-password/info/?<contact>.*", "/redefine-password/info/\${contact}")
                 }
                 r.uri(serviceUrl)
             }
