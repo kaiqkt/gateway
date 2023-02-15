@@ -4,6 +4,8 @@ services:
     container_name: mongodb
     image: mongo:3
     restart: always
+    ports:
+      - "27017:27017"
     environment:
       MONGO_INITDB_DATABASE: "mongodb"
       MONGO_INITDB_ROOT_USERNAME: "mongodb"
@@ -112,7 +114,7 @@ services:
       - "8080:8080"
     image:   gateway-service
     environment:
-      AUTHORIZATION-REGISTRY-SERVICE: http://authorization-service:8080
+      AUTHORIZATION-REGISTRY-URL: http://authorization-service:8080
       COMMUNICATION-SERVICE-URL: http://communication-service:8080
     networks:
       - service-network
