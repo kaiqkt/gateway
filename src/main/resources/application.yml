@@ -2,5 +2,5 @@ server:
   port: 8080
 
 services:
-  authorization-registry-service-url: ${AUTHORIZATION-REGISTRY-SERVICE}
+  authorization-registry-service-url: ${AUTHORIZATION-REGISTRY-URL}
   communication-service-url: ${COMMUNICATION-SERVICE-URL}
