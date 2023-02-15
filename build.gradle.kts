@@ -63,6 +63,7 @@ detekt {
 tasks.withType<CreateStartScripts> { mainClass.set(mainPkgAndClass) }
 
 tasks.jar {
+	enabled = false
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	manifest {
 		attributes("Main-Class" to mainPkgAndClass)

@@ -67,9 +67,9 @@ class AuthRegistryRoutesServiceConfig(
             }
             //user
             .route { r: PredicateSpec ->
-                r.path("/user/address")
+                r.path("/address")
                 r.filters {
-                    this.filter(setHeadersFilter.apply(SetHeadersFilter.Config("application/vnd.kaiqkt_user_address_v1+json")))
+                    this.filter(setHeadersFilter.apply(SetHeadersFilter.Config("application/vnd.kaiqkt_address_v1+json")))
                     this.filter(sessionValidationFilter.apply(SessionValidationFilter.Config()))
                 }
                 r.uri(serviceUrl)
