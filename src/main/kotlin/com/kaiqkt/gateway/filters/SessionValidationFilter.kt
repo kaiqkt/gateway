@@ -1,5 +1,6 @@
 package com.kaiqkt.gateway.filters
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.kaiqkt.gateway.entities.Error
 import com.kaiqkt.gateway.entities.Type
 import com.kaiqkt.gateway.exceptions.RefreshTokenException
@@ -7,7 +8,6 @@ import com.kaiqkt.gateway.exceptions.UnauthorisedException
 import com.kaiqkt.gateway.ext.AUTHORIZATION_BEARER_PREFIX
 import com.kaiqkt.gateway.ext.REFRESH_TOKEN_HEADER
 import com.kaiqkt.gateway.resources.AuthorizationRegistryClient
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.cloud.gateway.filter.GatewayFilter
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory
@@ -50,10 +50,11 @@ class SessionValidationFilter(
                 try {
                     refreshAuthentication(exchange, accessToken, refreshToken)
                 } catch (ex: RefreshTokenException) {
-                    exchange.error(ex.error)
+                    throw UnauthorisedException()
                 }
             }
-            Type.SESSION_NOT_FOUND -> exchange.error(error)
+
+            Type.SESSION_NOT_FOUND -> throw UnauthorisedException()
         }
     }
 
