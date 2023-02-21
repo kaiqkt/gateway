@@ -1,13 +1,14 @@
 package com.kaiqkt.gateway.resources
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.core.Headers
+import com.github.kittinunf.fuel.core.isSuccessful
 import com.kaiqkt.gateway.entities.Authentication
 import com.kaiqkt.gateway.entities.Error
 import com.kaiqkt.gateway.exceptions.RefreshTokenException
 import com.kaiqkt.gateway.exceptions.UnauthorisedException
 import com.kaiqkt.gateway.ext.mapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.core.Headers
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -24,9 +25,11 @@ class AuthorizationRegistryClient(
             .header(
                 mapOf(Headers.AUTHORIZATION to accessToken)
             ).response().let { (_, response) ->
-                if (response.statusCode == HttpStatus.UNAUTHORIZED.value()) {
+
+                if (!response.isSuccessful) {
                     return jacksonObjectMapper().readValue(response.body().toByteArray(), Error::class.java)
                 }
+
                 return null
             }
     }
@@ -45,6 +48,7 @@ class AuthorizationRegistryClient(
                         response.body().toByteArray(),
                         Authentication::class.java
                     )
+
                     HttpStatus.UNAUTHORIZED.value() -> {
                         val error = jacksonObjectMapper().readValue(response.body().toByteArray(), Error::class.java)
                         throw RefreshTokenException(error)
