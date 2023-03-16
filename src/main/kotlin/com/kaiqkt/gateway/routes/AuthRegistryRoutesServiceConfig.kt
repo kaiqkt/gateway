@@ -67,6 +67,14 @@ class AuthRegistryRoutesServiceConfig(
             }
             //user
             .route { r: PredicateSpec ->
+                r.path("/address")
+                r.filters {
+                    this.filter(setHeadersFilter.apply(SetHeadersFilter.Config("application/vnd.kaiqkt_address_v1+json")))
+                    this.filter(sessionValidationFilter.apply(SessionValidationFilter.Config()))
+                }
+                r.uri(serviceUrl)
+            }
+            .route { r: PredicateSpec ->
                 r.path("/address/**")
                 r.filters {
                     this.rewritePath("/address/?<addressId>.*", "/address/\${addressId}")
