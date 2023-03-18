@@ -6,11 +6,9 @@ import com.github.kittinunf.fuel.core.Headers
 import com.github.kittinunf.fuel.core.isSuccessful
 import com.kaiqkt.gateway.entities.Authentication
 import com.kaiqkt.gateway.entities.Error
-import com.kaiqkt.gateway.exceptions.RefreshTokenException
 import com.kaiqkt.gateway.exceptions.UnauthorisedException
 import com.kaiqkt.gateway.ext.mapper
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 
@@ -35,6 +33,7 @@ class AuthorizationRegistryClient(
     }
 
     fun refresh(accessToken: String, refreshToken: String): Authentication {
+
         Fuel.post("$serviceUrl/auth/refresh")
             .header(
                 mapOf(
@@ -42,22 +41,16 @@ class AuthorizationRegistryClient(
                     Headers.CONTENT_TYPE to "application/vnd.kaiqkt_auth_refresh_v1+json",
                     "Refresh-Token" to refreshToken
                 )
-            ).response().let { (_, response) ->
-                when (response.statusCode) {
-                    HttpStatus.OK.value() -> return mapper().readValue(
+            ).response().let { (_, response, _) ->
+
+                if (response.isSuccessful) {
+                    return mapper().readValue(
                         response.body().toByteArray(),
                         Authentication::class.java
                     )
-
-                    HttpStatus.UNAUTHORIZED.value() -> {
-                        val error = jacksonObjectMapper().readValue(response.body().toByteArray(), Error::class.java)
-                        throw RefreshTokenException(error)
-                    }
-
-                    else -> {
-                        throw UnauthorisedException()
-                    }
                 }
+
+                throw UnauthorisedException()
             }
     }
 }
