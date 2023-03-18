@@ -3,7 +3,6 @@ package com.kaiqkt.gateway.filters
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.kaiqkt.gateway.entities.Error
 import com.kaiqkt.gateway.entities.Type
-import com.kaiqkt.gateway.exceptions.RefreshTokenException
 import com.kaiqkt.gateway.exceptions.UnauthorisedException
 import com.kaiqkt.gateway.ext.AUTHORIZATION_BEARER_PREFIX
 import com.kaiqkt.gateway.ext.REFRESH_TOKEN_HEADER
@@ -46,14 +45,7 @@ class SessionValidationFilter(
         refreshToken: String
     ) {
         when (error.type) {
-            Type.ACCESS_TOKEN_EXPIRED -> {
-                try {
-                    refreshAuthentication(exchange, accessToken, refreshToken)
-                } catch (ex: RefreshTokenException) {
-                    throw UnauthorisedException()
-                }
-            }
-
+            Type.ACCESS_TOKEN_EXPIRED -> refreshAuthentication(exchange, accessToken, refreshToken)
             Type.SESSION_NOT_FOUND -> throw UnauthorisedException()
         }
     }
