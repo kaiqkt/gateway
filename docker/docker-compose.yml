@@ -69,6 +69,7 @@ services:
       NEW_ACCESS_TEMPLATE: new-access.html
       COMMUNICATION_LOCATION_SMS_TEMPLATE: communication-d-1/sms/
       PASSWORD_REDEFINE_SMS_TEMPLATE: redefine-password.txt
+      TZ: America/Sao_Paulo
     networks:
       - service-network
   communication-service:
@@ -103,6 +104,7 @@ services:
       TWILIO_URL: https://api.twilio.com/2010-04-01
       SERVICE_SECRET: world
       CUSTOMER_AUTH_SECRET: world
+      TZ: America/Sao_Paulo
     networks:
       - service-network
   gateway-service:
@@ -116,6 +118,7 @@ services:
     environment:
       AUTHORIZATION-REGISTRY-URL: http://authorization-service:8080
       COMMUNICATION-SERVICE-URL: http://communication-service:8080
+      TZ: America/Sao_Paulo
     networks:
       - service-network
 
