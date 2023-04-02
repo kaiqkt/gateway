@@ -77,6 +77,8 @@ services:
       - localstack
       - mongodb
       - redis
+    ports:
+      - "8081:8080"
     container_name: communication-service
     image: communication-service
     environment:
@@ -98,10 +100,14 @@ services:
       AWS_S3_ENDPOINT: http://localstack:4566/
       AWS_SQS_EMAIL_QUEUE_NAME: communication-sqs-email
       AWS_SQS_SMS_QUEUE_NAME: communication-sqs-sms
+      AWS_SQS_PUSH_QUEUE_NAME: communication-sqs-push
       TWILIO_ACCOUNT_SID:
       TWILIO_AUTH_TOKEN:
       TWILIO_SENDER_PHONE:
       TWILIO_URL: https://api.twilio.com/2010-04-01
+      ONE_SIGNAL_AUTH_TOKEN:
+      ONE_SIGNAL_APP_ID:
+      ONE_SIGNAL_URL: https://onesignal.com
       SERVICE_SECRET: world
       CUSTOMER_AUTH_SECRET: world
       TZ: America/Sao_Paulo
