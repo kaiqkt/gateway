@@ -9,6 +9,7 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
 import org.springframework.cloud.gateway.route.builder.filters
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 
 @Configuration
 class CommunicationServiceRoutesConfig(
@@ -23,12 +24,18 @@ class CommunicationServiceRoutesConfig(
     ): RouteLocator? {
         return builder.routes()
             .route { r: PredicateSpec ->
-                r.path("/ws")
+                r.path("/push")
+                r.method(HttpMethod.GET)
+                r.filters {
+                    this.filter(sessionValidationFilter.apply(SessionValidationFilter.Config()))
+                }
                 r.uri(serviceUrl)
             }
             .route { r: PredicateSpec ->
-                r.path("/notification")
+                r.path("/push/**")
+                r.method(HttpMethod.PATCH)
                 r.filters {
+                    this.rewritePath("/push/?<notification_id>.*", "/push/\${notification_id}")
                     this.filter(sessionValidationFilter.apply(SessionValidationFilter.Config()))
                 }
                 r.uri(serviceUrl)
