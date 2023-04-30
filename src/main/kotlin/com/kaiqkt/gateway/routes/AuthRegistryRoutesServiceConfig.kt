@@ -84,14 +84,6 @@ class AuthRegistryRoutesServiceConfig(
                 r.uri(serviceUrl)
             }
             .route { r: PredicateSpec ->
-                r.path("/user/phone")
-                r.filters {
-                    this.filter(setHeadersFilter.apply(SetHeadersFilter.Config("application/vnd.kaiqkt_user_phone_v1+json")))
-                    this.filter(sessionValidationFilter.apply(SessionValidationFilter.Config()))
-                }
-                r.uri(serviceUrl)
-            }
-            .route { r: PredicateSpec ->
                 r.path("/user/email")
                 r.filters {
                     this.filter(setHeadersFilter.apply(SetHeadersFilter.Config("application/vnd.kaiqkt_user_email_v1+json")))
@@ -118,13 +110,6 @@ class AuthRegistryRoutesServiceConfig(
                 r.path("/redefine-password/**")
                 r.filters {
                     this.rewritePath("/redefine-password/?<code>.*", "/redefine-password/\${code}")
-                }
-                r.uri(serviceUrl)
-            }
-            .route { r: PredicateSpec ->
-                r.path("/redefine-password/info/**")
-                r.filters {
-                    this.rewritePath("/redefine-password/info/?<contact>.*", "/redefine-password/info/\${contact}")
                 }
                 r.uri(serviceUrl)
             }
