@@ -8,6 +8,8 @@ import com.kaiqkt.gateway.entities.Authentication
 import com.kaiqkt.gateway.entities.Error
 import com.kaiqkt.gateway.exceptions.UnauthorisedException
 import com.kaiqkt.gateway.ext.mapper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
@@ -18,7 +20,13 @@ class AuthorizationRegistryClient(
     private val serviceUrl: String
 ) {
 
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    }
+
     fun validateSession(accessToken: String): Error? {
+        logger.info("Validating session in authorization registry")
+
         Fuel.get("$serviceUrl/session/validate")
             .header(
                 mapOf(Headers.AUTHORIZATION to accessToken)
@@ -33,6 +41,7 @@ class AuthorizationRegistryClient(
     }
 
     fun refresh(accessToken: String, refreshToken: String): Authentication {
+        logger.info("Refreshing session in authorization registry")
 
         Fuel.post("$serviceUrl/auth/refresh")
             .header(

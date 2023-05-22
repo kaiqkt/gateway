@@ -7,6 +7,9 @@ import com.kaiqkt.gateway.exceptions.UnauthorisedException
 import com.kaiqkt.gateway.ext.AUTHORIZATION_BEARER_PREFIX
 import com.kaiqkt.gateway.ext.REFRESH_TOKEN_HEADER
 import com.kaiqkt.gateway.resources.AuthorizationRegistryClient
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.gateway.filter.GatewayFilter
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory
@@ -19,13 +22,20 @@ import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
 
 @Component
-class SessionValidationFilter(
-    private val authorizationRegistryClient: AuthorizationRegistryClient
-) : AbstractGatewayFilterFactory<SessionValidationFilter.Config>(Config::class.java) {
+class SessionValidationFilter: AbstractGatewayFilterFactory<SessionValidationFilter.Config>(Config::class.java) {
+
+    @Autowired
+    private lateinit var authorizationRegistryClient: AuthorizationRegistryClient
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    }
 
     override fun apply(config: Config): GatewayFilter {
         return GatewayFilter { exchange: ServerWebExchange, chain: GatewayFilterChain ->
             val request = exchange.request
+
+            logger.info("Request to path ${request.path} of ${request.remoteAddress}")
 
             val accessToken = request.headers[HttpHeaders.AUTHORIZATION]?.first() ?: throw UnauthorisedException()
             val refreshToken = request.headers[REFRESH_TOKEN_HEADER]?.first() ?: throw UnauthorisedException()
@@ -69,17 +79,6 @@ class SessionValidationFilter(
         exchange.mutate().request(request).build()
 
         return exchange
-    }
-
-    private fun ServerWebExchange.error(
-        error: Error
-    ): Mono<Void> {
-        this.response.statusCode = HttpStatus.UNAUTHORIZED
-        val dataBufferFactory: DataBufferFactory = this.response.bufferFactory()
-        val body = jacksonObjectMapper().writeValueAsBytes(error)
-        this.response.headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-
-        return this.response.writeWith(Mono.just(body).map { r -> dataBufferFactory.wrap(r) })
     }
 
     class Config

@@ -4,3 +4,40 @@ server:
 services:
   authorization-registry-service-url: ${AUTHORIZATION-REGISTRY-URL}
   communication-service-url: ${COMMUNICATION-SERVICE-URL}
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: route-public-auth
+          uri: ${AUTHORIZATION-REGISTRY-URL}
+          predicates:
+            - Path=/redefine-password/**
+        - id: route-public-auth-post
+          uri: ${AUTHORIZATION-REGISTRY-URL}
+          predicates:
+            - Path=/user, /auth/login
+            - Method=POST
+        - id: route-private-auth
+          uri: ${AUTHORIZATION-REGISTRY-URL}
+          predicates:
+            - Path=/user/email, /user/update-password, /user, /session, /auth/logout/**, /address/**
+          filters:
+            - SessionValidationFilter
+        - id: route-private-communication
+          uri: ${COMMUNICATION-SERVICE-URL}
+          predicates:
+            - Path=/push/**
+          filters:
+            - SessionValidationFilter
+        - id: route-pubic-store-get
+          uri: ${STORE-SERVICE-URL}
+          predicates:
+            - Path=/product/categories
+            - Method=GET
+        - id: route-private-store
+          uri: ${STORE-SERVICE-URL}
+          predicates:
+            - Path=/store/**, /product/**
+          filters:
+            - SessionValidationFilter
